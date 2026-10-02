@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tabasamu Sips — Sales Tracker</title>
+<meta name="theme-color" content="#111111">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--surf:#f5f5f5;--ink:#111;--mute:#707072;--line:#e5e5e5;--volt:#cdff00;--pos:#007d48;--neg:#d30005;--ochre:#f56a00;--hero:#111;
+--display:'Barlow Condensed','Arial Narrow',Impact,sans-serif;--body:'Inter',system-ui,sans-serif;--inkSoft:var(--mute)}
+@media(prefers-color-scheme:dark){:root{--bg:#0b0b0c;--surf:#1a1a1c;--ink:#fff;--mute:#9e9ea0;--line:#2a2a2d;--pos:#5fe3a1;--neg:#ff6b5e;--hero:#1f1f22}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+.frame{max-width:760px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative}
+.head{order:-2;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;flex:none}
+.logo{font:800 26px/1 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.logo i{font-style:normal;background:var(--volt);color:#111;padding:0 7px;margin-left:5px}
+.content{flex:1;overflow-y:auto;padding:0 20px 28px;-webkit-overflow-scrolling:touch}
+.content.in{animation:fade .3s}
+.nav{flex:none;display:flex;justify-content:space-around;background:var(--bg);border-top:1px solid var(--line);padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+.nav button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mute);font:600 9.5px var(--body);cursor:pointer;padding:4px 5px}
+.nav svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav button.active{color:var(--ink)}.nav button.active svg{stroke-width:2.6}
+@media(min-width:760px){.nav{order:-1;justify-content:flex-start;gap:4px;border:0;padding:0 20px 14px}.nav button{flex-direction:row;font-size:12.5px;padding:8px 13px;border-radius:999px}.nav button.active{background:var(--ink);color:var(--bg)}.nav svg{width:16px;height:16px}}
+h2.section{font:800 clamp(26px,6vw,36px)/.95 var(--display);text-transform:uppercase;margin:24px 0 0;letter-spacing:.01em}
+.hdr-row h2.section{margin-top:8px}
+p.sub{color:var(--mute);font-size:13px;margin:6px 0 16px}
+.hdr-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:10px}
+.hero{background:var(--hero);color:#fff;margin:0 -20px 16px;padding:26px 20px 24px}
+.hero .lbl,.tile .lbl{display:block;font:600 12px var(--body);color:#a0a0a2}
+.hero .big{font:800 clamp(44px,14vw,80px)/.9 var(--display);color:var(--volt);text-transform:uppercase;margin:8px 0 18px}
+.hero .two{display:flex;gap:32px}.hero b{display:block;font:700 22px var(--display);margin-top:2px}
+.quick{display:flex;gap:8px;overflow-x:auto;margin-bottom:8px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.tile{background:var(--surf);padding:16px}.tile .lbl{color:var(--mute);margin-bottom:6px}.tile b{font-size:16px}
+.alert{width:100%;text-align:left;background:var(--volt);color:#111;border:0;padding:14px 16px;font:700 14px var(--body);margin-bottom:8px;cursor:pointer}
+.card{background:var(--surf);padding:16px;margin-bottom:8px}
+.money{font-family:var(--body);font-weight:700;font-variant-numeric:tabular-nums}
+.money.leaf{color:var(--pos)}.money.brick{color:var(--neg)}.money.ink{color:var(--ink)}
+.btn{background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:12px 20px;font:700 14px var(--body);cursor:pointer;white-space:nowrap;transition:transform .12s}
+.btn:active{transform:scale(.96)}
+.btn.ochre{background:var(--volt);color:#111}.btn.brick{background:var(--neg);color:#fff}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.seg{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px}
+.seg.sub{margin-bottom:16px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.seg button{flex:none;background:transparent;border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;font:600 13px var(--body);color:var(--ink);cursor:pointer;white-space:nowrap}
+.seg button.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{width:100%;border-radius:999px;background:var(--surf);border:0;padding:13px 18px;margin-bottom:12px;font:15px var(--body);color:var(--ink)}
+.stamp{display:inline-block;background:var(--pos);color:#fff;border-radius:999px;padding:3px 10px;font:700 10.5px var(--body);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.stamp.ochre{background:var(--volt);color:#111}
+.stamp.brick{background:var(--neg);color:#fff}
+.row-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.row-item:last-child{border:0}
+.empty{text-align:center;padding:64px 10px;color:var(--mute);font:700 22px var(--display);text-transform:uppercase}
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:30;display:flex;flex-direction:column;animation:fade .2s}
+.sheet{margin:auto auto 0;width:100%;max-width:640px;background:var(--bg);border-radius:20px 20px 0 0;padding:22px 20px 28px;max-height:90vh;overflow-y:auto;animation:up .3s cubic-bezier(.2,.8,.2,1)}
+.sheet h3{font:800 28px/1 var(--display);text-transform:uppercase;margin:0 0 16px;display:flex;justify-content:space-between;align-items:center}
+.sheet h3 span.x{cursor:pointer;color:var(--mute);font-size:20px;padding:0 6px}
+label.field{display:block;margin-bottom:12px}
+label.field span{display:block;font:600 12.5px var(--body);color:var(--mute);margin-bottom:6px}
+input,select{width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:13px 14px;color:var(--ink);font:16px var(--body)}
+input:focus,select:focus{outline:none;border-color:var(--ink)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item-row4{display:grid;grid-template-columns:1.7fr .55fr .85fr .85fr auto;gap:6px;margin-bottom:6px;align-items:center}
+.item-row4 select,.item-row4 input{padding:10px 8px;font-size:13px}
+.item-row3{display:grid;grid-template-columns:2fr .7fr 1fr auto;gap:6px;margin-bottom:6px;align-items:center}
+.item-row3 select,.item-row3 input{padding:10px 8px;font-size:13px}
+.icon-x{background:none;border:0;color:var(--mute);font-size:15px;cursor:pointer;padding:4px 8px}
+.toast{position:fixed;bottom:calc(92px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,8px);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:999px;font:600 13px var(--body);z-index:50;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.statrow{display:grid;grid-template-columns:100px 1fr 72px;align-items:center;gap:10px;margin-bottom:10px}
+.statname{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.statbarwrap{background:var(--surf);height:16px;border-radius:999px;overflow:hidden}
+.statbar{display:block;height:100%;background:var(--ink);border-radius:999px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.statval{font-size:12px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.totalline{display:flex;justify-content:space-between;padding:8px 0;font-size:14px}
+.totalline.bold{font-weight:700;border-top:1px solid var(--line);margin-top:4px;padding-top:12px}
+@keyframes fade{from{opacity:0}}@keyframes up{from{transform:translateY(40px);opacity:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <header class="head"><div class="logo">Tabasamu<i>Sips</i></div></header>
+  <div class="content" id="content"></div>
+  <div class="nav" id="nav"></div>
+  <div id="sheetHost"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ===================== DB LAYER ===================== */
+const DB_NAME = "tabasamuSipsDB", DB_VER = 2;
+const STORES = ["products","customers","sales","expenses","prodExpenses","orders","batches","stockEvents"];
+let _dbp;
+function openDB(){
+  if (_dbp) return _dbp;
+  _dbp = new Promise((resolve,reject)=>{
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e=>{
+      const db = e.target.result;
+      STORES.forEach(s=>{ if(!db.objectStoreNames.contains(s)) db.createObjectStore(s,{keyPath:"id"}); });
+    };
+    req.onsuccess = e=>resolve(e.target.result);
+    req.onerror = e=>reject(e.target.error);
+  });
+  return _dbp;
+}
+async function dbAll(store){
+  const db = await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(store,"readonly");
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function dbPut(store, val){
+  const db = await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(store,"readwrite");
+    tx.objectStore(store).put(val);
+    tx.oncomplete=()=>resolve(val);
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+async function dbDel(store, id){
+  const db = await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction(store,"readwrite");
+    tx.objectStore(store).delete(id);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+
+/* ===================== HELPERS ===================== */
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function fmt(n){ const v = Math.round(Number(n)||0); return "KSh " + v.toLocaleString("en-KE"); }
+function esc(s){ return (s||"").toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function niceDate(d){ const dt=new Date(d); return isNaN(dt) ? "—" : dt.toLocaleDateString("en-KE",{day:"numeric",month:"short",year:"numeric"}); }
+function hashColor(str){ let h=0; for(let i=0;i<str.length;i++){ h = str.charCodeAt(i) + ((h<<5)-h); } return `hsl(${Math.abs(h)%360}, 60%, 42%)`; }
+function initialsOf(name){ const w=(name||"").trim().split(/\s+/).filter(Boolean); return (w.slice(0,2).map(x=>x[0]).join("") || "TS").toUpperCase(); }
+function productMockup(p, size){
+  const color = hashColor(p.name || "Product");
+  const txt = esc(initialsOf(p.name));
+  const fs = Math.round((size||44)/64*22);
+  return `<svg viewBox="0 0 64 64" width="100%" height="100%" style="display:block"><rect width="64" height="64" rx="12" fill="${color}"/>
+    <path d="M26 6h12v8l4 6v34a3 3 0 01-3 3H25a3 3 0 01-3-3V20l4-6z" fill="rgba(255,255,255,.2)"/>
+    <text x="32" y="39" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="${fs}" fill="#fff" text-anchor="middle">${txt}</text></svg>`;
+}
+function readAndCompressImage(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const maxDim = 480; let w=img.width, h=img.height;
+        if (w>=h && w>maxDim){ h=Math.round(h*maxDim/w); w=maxDim; }
+        else if (h>w && h>maxDim){ w=Math.round(w*maxDim/h); h=maxDim; }
+        const canvas = document.createElement("canvas"); canvas.width=w; canvas.height=h;
+        canvas.getContext("2d").drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL("image/jpeg",0.82));
+      };
+      img.onerror = ()=>reject(new Error("bad image"));
+      img.src = reader.result;
+    };
+    reader.onerror = ()=>reject(new Error("read failed"));
+    reader.readAsDataURL(file);
+  });
+}
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),2200); }
+
+const EXP_CATS = { transport:"Transport", equipment:"Equipment", payout:"Pay-out", other:"Other" };
+const PROD_CATS = { ingredients:"Ingredients", packaging:"Packaging", labor:"Labour", other:"Other" };
+
+const ICONS = {
+  dashboard:'<path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/>',
+  sales:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+  stock:'<path d="M9 2h6v4l2 3v11a2 2 0 01-2 2H9a2 2 0 01-2-2V9l2-3z"/><path d="M7 13h10"/>',
+  expenses:'<circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/>',
+  customers:'<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+  stats:'<path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/>'
+};
+
+/* ===================== APP ===================== */
+const App = {
+  tab: "dashboard", q: "", _anim: true, _statMetric: "units",
+  salesSub: "sales", stockSub: "flavours", expSub: "operating", _orderStatus: "pending",
+  data: { products: [], customers: [], sales: [], expenses: [], prodExpenses: [], orders: [], batches: [], stockEvents: [] },
+
+  async init(){
+    const [products, customers, sales, expenses, prodExpenses, orders, batches, stockEvents] = await Promise.all([
+      dbAll("products"), dbAll("customers"), dbAll("sales"), dbAll("expenses"), dbAll("prodExpenses"), dbAll("orders"), dbAll("batches"), dbAll("stockEvents")
+    ]);
+    this.data.products = products;
+    this.data.customers = customers;
+    this.data.sales = sales;
+    this.data.expenses = expenses;
+    this.data.prodExpenses = prodExpenses;
+    this.data.orders = orders;
+    this.data.batches = batches;
+    this.data.stockEvents = stockEvents;
+    this.renderNav();
+    this.render();
+  },
+
+  go(tab){ this.tab = tab; this.q=""; this._anim=true; if (navigator.vibrate) navigator.vibrate(8); this.render(); document.getElementById("content").scrollTop=0; },
+  quick(tab){
+    this.tab = tab==="product" ? "stock" : tab; this.q=""; this._anim=true;
+    if (tab==="product") this.stockSub="flavours";
+    this.render();
+    ({sales:()=>this.openSaleForm(), customers:()=>this.openCustomerForm(), product:()=>this.openProductForm()})[tab]();
+  },
+
+  hit(...vals){ const q=this.q.trim().toLowerCase(); return !q || vals.some(v=>(v||"").toString().toLowerCase().includes(q)); },
+  search(v){ this.q=v; this.render(); },
+  searchBox(ph){ return `<input id="q" class="search" type="search" placeholder="${ph||'Search'}" value="${esc(this.q)}" oninput="App.search(this.value)">`; },
+
+  renderNav(){
+    const L = {dashboard:"Home", sales:"Sales", stock:"Stock", expenses:"Money", customers:"Customers", stats:"Stats"};
+    document.getElementById("nav").innerHTML = Object.keys(L).map(id=>
+      `<button class="${this.tab===id?'active':''}" aria-label="${L[id]}" onclick="App.go('${id}')"><svg viewBox="0 0 24 24">${ICONS[id]}</svg>${L[id]}</button>`
+    ).join("");
+  },
+
+  render(){
+    this.renderNav();
+    const c = document.getElementById("content");
+    const views = { dashboard:()=>this.viewDashboard(), sales:()=>this.viewSales(), stock:()=>this.viewStock(), expenses:()=>this.viewExpenses(), customers:()=>this.viewCustomers(), stats:()=>this.viewStats() };
+    c.innerHTML = views[this.tab]();
+    this.after();
+  },
+
+  after(){
+    const c = document.getElementById("content");
+    const q = document.getElementById("q"); if (q && this.q){ q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+    if (!this._anim) return; this._anim = false;
+    c.classList.remove("in"); void c.offsetWidth; c.classList.add("in");
+    if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+    document.querySelectorAll(".statbar").forEach(b=>{ const w=b.style.width; b.style.width="0%"; requestAnimationFrame(()=>requestAnimationFrame(()=>b.style.width=w)); });
+    document.querySelectorAll("[data-v]").forEach(el=>{ const v=+el.dataset.v, t0=performance.now();
+      const step=t=>{ const p=Math.min(1,(t-t0)/900); el.textContent = fmt(v*(1-Math.pow(1-p,3))); if (p<1) requestAnimationFrame(step); }; requestAnimationFrame(step); });
+    document.querySelectorAll("[data-vn]").forEach(el=>{ const v=+el.dataset.vn, t0=performance.now();
+      const step=t=>{ const p=Math.min(1,(t-t0)/900); el.textContent = Math.round(v*(1-Math.pow(1-p,3))).toLocaleString("en-KE"); if (p<1) requestAnimationFrame(step); }; requestAnimationFrame(step); });
+  },
+
+  /* ---------- derived data ---------- */
+  productMap(){ const m={}; this.data.products.forEach(p=>m[p.id]=p); return m; },
+  customerMap(){ const m={}; this.data.customers.forEach(c=>m[c.id]=c); return m; },
+  lineTotal(l){ return Math.max(0, Number(l.qty)*Number(l.unitPrice) - Number(l.discount||0)); },
+
+  visits(){
+    const g = {};
+    this.data.sales.forEach(l=>{ (g[l.visitId] = g[l.visitId]||[]).push(l); });
+    return Object.keys(g).map(vid=>{
+      const lines = g[vid];
+      return {
+        visitId: vid, lines,
+        customerId: lines[0].customerId, location: lines[0].location, date: lines[0].date, note: lines[0].note,
+        qty: lines.reduce((s,l)=>s+Number(l.qty),0),
+        gross: lines.reduce((s,l)=>s+Number(l.qty)*Number(l.unitPrice),0),
+        discount: lines.reduce((s,l)=>s+Number(l.discount||0),0),
+        total: lines.reduce((s,l)=>s+this.lineTotal(l),0)
+      };
+    }).sort((a,b)=> new Date(b.date) - new Date(a.date));
+  },
+
+  orderGroups(){
+    const g = {};
+    this.data.orders.forEach(o=>{ (g[o.orderGroupId] = g[o.orderGroupId]||[]).push(o); });
+    return Object.keys(g).map(gid=>{
+      const lines = g[gid];
+      return {
+        orderGroupId: gid, lines, status: lines[0].status,
+        customerId: lines[0].customerId, location: lines[0].location, orderDate: lines[0].orderDate, dueDate: lines[0].dueDate, note: lines[0].note,
+        qty: lines.reduce((s,l)=>s+Number(l.qty),0),
+        total: lines.reduce((s,l)=>s+Number(l.qty)*Number(l.unitPrice),0)
+      };
+    }).sort((a,b)=> new Date(a.dueDate||a.orderDate) - new Date(b.dueDate||b.orderDate));
+  },
+
+  totals(){
+    const gross = this.data.sales.reduce((s,l)=>s+Number(l.qty)*Number(l.unitPrice),0);
+    const discount = this.data.sales.reduce((s,l)=>s+Number(l.discount||0),0);
+    const units = this.data.sales.reduce((s,l)=>s+Number(l.qty),0);
+    const recurring = this.data.customers.filter(c=>c.tag==="recurring").length;
+    const oneTime = this.data.customers.length - recurring;
+    const opEx = this.data.expenses.reduce((s,e)=>s+Number(e.amount),0);
+    const prodEx = this.data.prodExpenses.reduce((s,e)=>s+Number(e.amount),0);
+    const net = gross - discount;
+    return { gross, discount, units, recurring, oneTime, opEx, prodEx, net, trueProfit: net - opEx - prodEx };
+  },
+
+  productStats(){
+    const pm = this.productMap();
+    const agg = {};
+    this.data.sales.forEach(l=>{
+      const a = agg[l.productId] || (agg[l.productId] = { productId:l.productId, units:0, gross:0, discount:0, customers:new Set() });
+      a.units += Number(l.qty); a.gross += Number(l.qty)*Number(l.unitPrice); a.discount += Number(l.discount||0); a.customers.add(l.customerId);
+    });
+    const costByProduct = {};
+    this.data.prodExpenses.forEach(e=>{ costByProduct[e.productId] = (costByProduct[e.productId]||0) + Number(e.amount); });
+    return Object.values(agg).map(a=>{
+      const net = a.gross - a.discount, cost = costByProduct[a.productId] || 0;
+      return { ...a, name: (pm[a.productId]||{}).name || "Deleted product", net, customers: a.customers.size, prodCost: cost, trueNet: net - cost };
+    }).sort((a,b)=> b.trueNet - a.trueNet);
+  },
+
+  /* ---------- DASHBOARD ---------- */
+  viewDashboard(){
+    const t = this.totals(), ps = this.productStats(), top = ps[0];
+    const cm = this.customerMap();
+    const recent = this.visits().slice(0,6);
+    const pendingOrders = this.orderGroups().filter(o=>o.status==="pending");
+    const brewing = this.data.batches.filter(b=>b.status==="brewing");
+    const outStock = this.data.products.filter(p=> Number(p.stock||0) <= 0);
+    const lowStock = this.data.products.filter(p=> Number(p.lowStock||0)>0 && Number(p.stock||0) > 0 && Number(p.stock||0) <= Number(p.lowStock));
+    return `
+      <section class="hero"><span class="lbl">Net profit, all time</span>
+        <div class="big" data-v="${t.trueProfit}">${fmt(t.trueProfit)}</div>
+        <div class="two"><div><span class="lbl">Sales revenue</span><b data-v="${t.net}">${fmt(t.net)}</b></div>
+        <div><span class="lbl">Total costs</span><b data-v="${t.opEx+t.prodEx}">${fmt(t.opEx+t.prodEx)}</b></div></div></section>
+      <div class="quick"><button class="btn" onclick="App.quick('sales')">Record sale</button>
+        <button class="btn ghost" onclick="App.quick('customers')">Add customer</button>
+        <button class="btn ghost" onclick="App.quick('product')">Add flavour</button></div>
+      ${(outStock.length||lowStock.length) ? `<button class="alert" onclick="App.go('stock')">${outStock.length?outStock.length+' out of stock':''}${outStock.length&&lowStock.length?' · ':''}${lowStock.length?lowStock.length+' running low':''}. View stock</button>` : ``}
+      <div class="tiles">
+        <div class="tile"><span class="lbl">Units sold</span><b data-vn="${t.units}">${t.units}</b></div>
+        <div class="tile"><span class="lbl">Customers</span><b style="font-size:13px">${t.recurring} recurring · ${t.oneTime} one-time</b></div>
+        <div class="tile" style="cursor:pointer" onclick="App.go('sales')"><span class="lbl">Pending orders</span><b data-vn="${pendingOrders.length}">${pendingOrders.length}</b></div>
+        <div class="tile" style="cursor:pointer" onclick="App.go('stock')"><span class="lbl">Batches brewing</span><b data-vn="${brewing.length}">${brewing.length}</b></div>
+      </div>
+      ${top ? `<div class="card"><span class="lbl" style="color:var(--mute);display:block;margin-bottom:4px">Top product</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0">
+            <div style="width:36px;height:36px;border-radius:9px;overflow:hidden;flex:none">${this.thumbHtml(this.productMap()[top.productId]||{name:top.name},36)}</div>
+            <b style="font:800 20px var(--display);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(top.name)}</b>
+          </div><span class="money leaf" style="flex:none">${top.units} sold</span></div></div>` : ``}
+      <h2 class="section">Recent sales</h2><p class="sub">Last 6 visits</p>
+      ${recent.length===0 ? `<div class="empty">No sales yet. Record your first one.</div>` : recent.map(v=>{
+        const cust = cm[v.customerId];
+        return `<div class="row-item"><div><div style="font-size:15px;font-weight:600">${esc(cust?cust.name:"Walk-in")}</div>
+          <div style="font-size:12px;color:var(--mute);margin-top:2px">${esc(v.location||"—")} · ${niceDate(v.date)}</div></div>
+          <span class="money leaf">${fmt(v.total)}</span></div>`;
+      }).join("")}
+    `;
+  },
+
+  /* ---------- SALES & ORDERS (tab) ---------- */
+  setSalesSub(s){ this.salesSub=s; this._anim=true; this.render(); },
+  viewSales(){
+    const sub = this.salesSub;
+    return `
+      <div class="hdr-row"><div><h2 class="section">${sub==='orders'?'Orders':'Sales'}</h2>
+        <p class="sub">${sub==='orders' ? 'Orders given, waiting to be fulfilled' : 'Completed transactions'}</p></div>
+        <button class="btn" onclick="${sub==='orders'?"App.openOrderForm()":"App.openSaleForm()"}">+ New</button></div>
+      <div class="seg sub"><button class="${sub==='sales'?'active':''}" onclick="App.setSalesSub('sales')">Sales</button>
+        <button class="${sub==='orders'?'active':''}" onclick="App.setSalesSub('orders')">Orders</button></div>
+      ${sub==='orders' ? this.ordersBody() : this.salesBody()}
+    `;
+  },
+  salesBody(){
+    const cm = this.customerMap(), pm = this.productMap();
+    const list = this.visits().filter(v=>{
+      const cust = cm[v.customerId];
+      const prodNames = v.lines.map(l=>(pm[l.productId]||{}).name || "");
+      return this.hit(cust?cust.name:"", v.location, ...prodNames);
+    });
+    return `
+      ${this.searchBox("Search customer, location, product")}
+      <p class="sub" style="margin-top:-6px">${list.length} visit${list.length===1?'':'s'}</p>
+      ${list.length===0 ? `<div class="empty">No sales yet.</div>` : list.map(v=>{
+        const cust = cm[v.customerId];
+        return `<div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div><b style="font-size:15px">${esc(cust?cust.name:"Walk-in")}</b>
+              ${cust && cust.tag==='recurring' ? '<span class="stamp" style="margin-left:6px">Recurring</span>' : ''}
+              <div style="font-size:11.5px;color:var(--inkSoft);margin-top:3px">${esc(v.location||"—")} · ${niceDate(v.date)}</div></div>
+            <div style="text-align:right"><span class="money leaf" style="font-size:16px">${fmt(v.total)}</span><br>
+              <button class="icon-x" onclick="App.deleteVisit('${v.visitId}')">✕ remove</button></div>
+          </div>
+          <div style="margin-top:8px;border-top:1px solid var(--line);padding-top:8px">
+            ${v.lines.map(l=>`<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0">
+              <span>${esc((pm[l.productId]||{}).name || "Deleted product")} × ${l.qty}</span>
+              <span>${fmt(l.qty*l.unitPrice - (l.discount||0))}${l.discount?` <span style="color:var(--mute)">(−${fmt(l.discount)})</span>`:``}</span></div>`).join("")}
+          </div>
+        </div>`;
+      }).join("")}
+    `;
+  },
+  openSaleForm(prefill){
+    this._saleItemIds = [];
+    this._fulfillingOrderGroupId = prefill ? prefill.orderGroupId : null;
+    const custOptions = this.data.customers.map(c=>`<option value="${c.id}" ${prefill&&prefill.customerId===c.id?'selected':''}>${esc(c.name)}${c.tag==='recurring'?' · Recurring':''}</option>`).join("");
+    const locs = [...new Set(this.data.sales.map(s=>s.location).filter(Boolean))];
+    const html = `<div class="sheet"><h3>New sale <span class="x" onclick="App.closeSheet()">✕</span></h3>
+      <label class="field"><span>Customer</span><select id="f_customer" onchange="App.toggleNewCustomer(this.value)">
+        <option value="__new__" ${!(prefill&&prefill.customerId)?'selected':''}>+ New customer</option>
+        ${custOptions}
+      </select></label>
+      <div id="newCustWrap" style="display:${prefill&&prefill.customerId?'none':'block'}">
+        <label class="field"><span>New customer name</span><input id="nc_name" placeholder="e.g. Jane W."></label>
+        <label class="field"><span>Contact (phone or email)</span><input id="nc_contact" placeholder="e.g. 07xx xxx xxx"></label>
+      </div>
+      <div class="grid2">
+        <label class="field"><span>Where sold</span><input id="f_loc" list="locList" value="${esc(prefill&&prefill.location||'')}" placeholder="e.g. Organic Farmers Market"></label>
+        <label class="field"><span>Date</span><input id="f_date" type="date" value="${today()}"></label>
+      </div>
+      <datalist id="locList">${locs.map(l=>`<option value="${esc(l)}">`).join("")}</datalist>
+      <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--inkSoft)">Products bought</span>
+      <div id="saleItemsWrap" style="margin-top:6px"></div>
+      <button class="btn ghost" style="margin-bottom:12px" onclick="App.addSaleItem()">+ Add product</button>
+      <label class="field"><span>Note (optional)</span><input id="f_note" placeholder="Anything else"></label>
+      <button class="btn" style="width:100%;padding:12px;font-size:13.5px" onclick="App.saveSaleForm()">Save sale</button>
+    </div>`;
+    document.getElementById("sheetHost").innerHTML = `<div class="sheet-overlay">${html}</div>`;
+    if (prefill && prefill.items && prefill.items.length){ prefill.items.forEach(it=>this.addSaleItem(it)); } else { this.addSaleItem(); }
+  },
+  toggleNewCustomer(v){ const w=document.getElementById("newCustWrap"); if (w) w.style.display = v==="__new__" ? "block" : "none"; },
+  itemRowHtml(id, prefill){
+    const opts = this.data.products.map(p=>`<option value="${p.id}" data-price="${p.price}" ${prefill&&prefill.productId===p.id?'selected':''}>${esc(p.name)} — ${fmt(p.price)}</option>`).join("");
+    const price = prefill ? Number((this.productMap()[prefill.productId]||{}).price)||"" : "";
+    return `<div class="item-row4" data-id="${id}">
+      <select class="it-prod" onchange="App.applyProductPrice('${id}', this)"><option value="">Product…</option>${opts}</select>
+      <input class="it-qty" type="number" min="1" value="${prefill?prefill.qty:1}" placeholder="Qty">
+      <input class="it-price" type="number" value="${price}" placeholder="Unit KSh">
+      <input class="it-disc" type="number" placeholder="Discount">
+      <button class="icon-x" onclick="App.removeSaleItem('${id}')">✕</button>
+    </div>`;
+  },
+  addSaleItem(prefill){ const id=uid(); this._saleItemIds.push(id); document.getElementById("saleItemsWrap").insertAdjacentHTML("beforeend", this.itemRowHtml(id, prefill)); },
+  removeSaleItem(id){
+    this._saleItemIds = this._saleItemIds.filter(x=>x!==id);
+    const row = document.querySelector(`.item-row4[data-id="${id}"]`); if (row) row.remove();
+  },
+  applyProductPrice(id, selectEl){
+    const price = selectEl.selectedOptions[0] ? selectEl.selectedOptions[0].dataset.price : null;
+    const row = document.querySelector(`.item-row4[data-id="${id}"]`);
+    if (row && price) row.querySelector(".it-price").value = price;
+  },
+  saveSaleForm(){
+    const custSel = document.getElementById("f_customer").value;
+    let customerId = custSel;
+    if (custSel === "__new__"){
+      const name = document.getElementById("nc_name").value.trim();
+      if (!name) return toast("Customer name is required");
+      const contact = document.getElementById("nc_contact").value.trim();
+      const cust = { id: uid(), name, contact, tag: "one-time", tagManual: false, createdAt: today() };
+      this.data.customers.push(cust); dbPut("customers", cust);
+      customerId = cust.id;
+    }
+    const location = document.getElementById("f_loc").value.trim();
+    const date = document.getElementById("f_date").value || today();
+    const note = document.getElementById("f_note").value.trim();
+    const rows = [...document.querySelectorAll("#saleItemsWrap .item-row4")];
+    const lines = [];
+    const visitId = uid();
+    for (const row of rows){
+      const productId = row.querySelector(".it-prod").value;
+      const qty = Number(row.querySelector(".it-qty").value) || 0;
+      const unitPrice = Number(row.querySelector(".it-price").value) || 0;
+      const discount = Number(row.querySelector(".it-disc").value) || 0;
+      if (!productId || qty<=0) continue;
+      lines.push({ id: uid(), visitId, customerId, productId, qty, unitPrice, discount, location, date, note });
+    }
+    if (lines.length===0) return toast("Add at least one product with a quantity");
+    lines.forEach(l=>{
+      this.data.sales.unshift(l); dbPut("sales", l);
+      const prod = this.data.products.find(p=>p.id===l.productId);
+      if (prod){ prod.stock = Math.max(0, Number(prod.stock||0) - Number(l.qty)); dbPut("products", prod); }
+    });
+    const visitCount = new Set(this.data.sales.filter(s=>s.customerId===customerId).map(s=>s.visitId)).size;
+    const cust = this.data.customers.find(c=>c.id===customerId);
+    if (cust && !cust.tagManual && visitCount>=2 && cust.tag!=="recurring"){ cust.tag="recurring"; dbPut("customers", cust); }
+    if (this._fulfillingOrderGroupId){
+      this.data.orders.filter(o=>o.orderGroupId===this._fulfillingOrderGroupId).forEach(o=>{ o.status="fulfilled"; dbPut("orders", o); });
+      this._fulfillingOrderGroupId = null;
+    }
+    this.closeSheet(); this.render(); toast("Sale recorded");
+  },
+  deleteVisit(visitId){
+    if (!confirm("Delete this entire sale? Stock already deducted for it won't be added back automatically.")) return;
+    this.data.sales.filter(s=>s.visitId===visitId).forEach(s=>dbDel("sales", s.id));
+    this.data.sales = this.data.sales.filter(s=>s.visitId!==visitId);
+    this.render(); toast("Sale deleted");
+  },
+
+  /* ---------- ORDERS ---------- */
+  setOrderStatus(s){ this._orderStatus=s; this._anim=true; this.render(); },
+  ordersBody(){
+    const cm = this.customerMap(), pm = this.productMap();
+    const status = this._orderStatus;
+    const list = this.orderGroups().filter(o=>o.status===status).filter(o=>{
+      const cust = cm[o.customerId]; const prodNames = o.lines.map(l=>(pm[l.productId]||{}).name||"");
+      return this.hit(cust?cust.name:"", o.location, ...prodNames);
+    });
+    return `
+      <div class="seg"><button class="${status==='pending'?'active':''}" onclick="App.setOrderStatus('pending')">Pending</button>
+        <button class="${status==='fulfilled'?'active':''}" onclick="App.setOrderStatus('fulfilled')">Fulfilled</button>
+        <button class="${status==='cancelled'?'active':''}" onclick="App.setOrderStatus('cancelled')">Cancelled</button></div>
+      ${this.searchBox("Search orders")}
+      ${list.length===0 ? `<div class="empty">No ${status} orders.</div>` : list.map(o=>{
+        const cust = cm[o.customerId];
+        return `<div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div><b style="font-size:15px">${esc(cust?cust.name:"Walk-in")}</b>
+              <div style="font-size:11.5px;color:var(--inkSoft);margin-top:3px">${esc(o.location||"—")} · Due ${o.dueDate?niceDate(o.dueDate):'—'}</div></div>
+            <span class="money ink">${fmt(o.total)}</span>
+          </div>
+          <div style="margin-top:8px;border-top:1px solid var(--line);padding-top:8px">
+            ${o.lines.map(l=>`<div style="font-size:12.5px;padding:2px 0">${esc((pm[l.productId]||{}).name||'Deleted product')} × ${l.qty}</div>`).join("")}
+          </div>
+          ${status==='pending' ? `<div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn" style="flex:1;padding:9px;font-size:12.5px" onclick="App.fulfilOrder('${o.orderGroupId}')">Fulfil as sale</button>
+            <button class="btn ghost" style="flex:1;padding:9px;font-size:12.5px" onclick="App.cancelOrder('${o.orderGroupId}')">Cancel</button>
+          </div>` : ``}
+        </div>`;
+      }).join("")}
+    `;
+  },
+  openOrderForm(){
+    this._orderItemIds = [];
+    const custOptions = this.data.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+    const locs = [...new Set(this.data.orders.map(o=>o.location).filter(Boolean))];
+    const html = `<div class="sheet"><h3>New order <span class="x" onclick="App.closeSheet()">✕</span></h3>
+      <label class="field"><span>Customer</span><select id="o_customer" onchange="App.toggleNewOrderCustomer(this.value)">
+        <option value="__new__">+ New customer</option>${custOptions}</select></label>
+      <div id="newOrderCustWrap">
+        <label class="field"><span>New customer name</span><input id="noc_name" placeholder="e.g. Java House Westlands"></label>
+        <label class="field"><span>Contact (phone or email)</span><input id="noc_contact"></label>
+      </div>
+      <div class="grid2">
+        <label class="field"><span>Where / for</span><input id="o_loc" list="orderLocList" placeholder="e.g. Wholesale delivery"></label>
+        <label class="field"><span>Needed by</span><input id="o_due" type="date"></label>
+      </div>
+      <datalist id="orderLocList">${locs.map(l=>`<option value="${esc(l)}">`).join("")}</datalist>
+      <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--inkSoft)">Products ordered</span>
+      <div id="orderItemsWrap" style="margin-top:6px"></div>
+      <button class="btn ghost" style="margin-bottom:12px" onclick="App.addOrderItem()">+ Add product</button>
+      <label class="field"><span>Note (optional)</span><input id="o_note"></label>
+      <button class="btn" style="width:100%;padding:12px;font-size:13.5px" onclick="App.saveOrderForm()">Save order</button>
+    </div>`;
+    document.getElementById("sheetHost").innerHTML = `<div class="sheet-overlay">${html}</div>`;
+    this.addOrderItem();
+  },
+  toggleNewOrderCustomer(v){ const w=document.getElementById("newOrderCustWrap"); if (w) w.style.display = v==="__new__" ? "block" : "none"; },
+  orderItemRowHtml(id){
+    const opts = this.data.products.map(p=>`<option value="${p.id}" data-price="${p.price}">${esc(p.name)} — ${fmt(p.price)}</option>`).join("");
+    return `<div class="item-row3" data-id="${id}">
+      <select class="ot-prod" onchange="App.applyOrderPrice('${id}', this)"><option value="">Product…</option>${opts}</select>
+      <input class="ot-qty" type="number" min="1" value="1" placeholder="Qty">
+      <input class="ot-price" type="number" placeholder="Unit KSh">
+      <button class="icon-x" onclick="App.removeOrderItem('${id}')">✕</button>
+    </div>`;
+  },
+  addOrderItem(){ const id=uid(); this._orderItemIds.push(id); document.getElementById("orderItemsWrap").insertAdjacentHTML("beforeend", this.orderItemRowHtml(id)); },
+  removeOrderItem(id){ this._orderItemIds=this._orderItemIds.filter(x=>x!==id); const row=document.querySelector(`.item-row3[data-id="${id}"]`); if(row) row.remove(); },
+  applyOrderPrice(id, selectEl){ const price=selectEl.selectedOptions[0]?selectEl.selectedOptions[0].dataset.price:null; const row=document.querySelector(`.item-row3[data-id="${id}"]`); if(row&&price) row.querySelector(".ot-price").value=price; },
+  saveOrderForm(){
+    const custSel = document.getElementById("o_customer").value;
+    let customerId = custSel;
+    if (custSel==="__new__"){
+      const name=document.getElementById("noc_name").value.trim();
+      if (!name) return toast("Customer name is required");
+      const contact=document.getElementById("noc_contact").value.trim();
+      const cust={id:uid(),name,contact,tag:"one-time",tagManual:false,createdAt:today()};
+      this.data.customers.push(cust); dbPut("customers",cust);
+      customerId=cust.id;
+    }
+    const location=document.getElementById("o_loc").value.trim();
+    const dueDate=document.getElementById("o_due").value;
+    const note=document.getElementById("o_note").value.trim();
+    const rows=[...document.querySelectorAll("#orderItemsWrap .item-row3")];
+    const orderGroupId=uid();
+    const lines=[];
+    for (const row of rows){
+      const productId=row.querySelector(".ot-prod").value;
+      const qty=Number(row.querySelector(".ot-qty").value)||0;
+      const unitPrice=Number(row.querySelector(".ot-price").value)||0;
+      if (!productId||qty<=0) continue;
+      lines.push({id:uid(), orderGroupId, customerId, productId, qty, unitPrice, location, orderDate:today(), dueDate, note, status:"pending"});
+    }
+    if (lines.length===0) return toast("Add at least one product");
+    lines.forEach(l=>{ this.data.orders.unshift(l); dbPut("orders", l); });
+    this.closeSheet(); this.render(); toast("Order saved");
+  },
+  fulfilOrder(orderGroupId){
+    const lines = this.data.orders.filter(o=>o.orderGroupId===orderGroupId);
+    if (!lines.length) return;
+    this.openSaleForm({ orderGroupId, customerId: lines[0].customerId, location: lines[0].location, items: lines.map(l=>({productId:l.productId, qty:l.qty})) });
+  },
+  cancelOrder(orderGroupId){
+    if (!confirm("Cancel this order?")) return;
+    this.data.orders.filter(o=>o.orderGroupId===orderGroupId).forEach(o=>{ o.status="cancelled"; dbPut("orders", o); });
+    this.render(); toast("Order cancelled");
+  },
+
+  /* ---------- CUSTOMERS ---------- */
+  viewCustomers(){
+    const list = this.data.customers.filter(c=>this.hit(c.name, c.contact));
+    const byCust = {}; this.visits().forEach(v=>{ (byCust[v.customerId] = byCust[v.customerId]||[]).push(v); });
+    return `
+      <div class="hdr-row"><div><h2 class="section">Customers</h2><p class="sub">${list.length} on file</p></div>
+        <button class="btn ochre" onclick="App.openCustomerForm()">+ New</button></div>
+      ${this.searchBox("Search customers")}
+      ${list.length===0 ? `<div class="empty">No customers yet.</div>` : list.map(c=>{
+        const vs = byCust[c.id] || [];
+        const spent = vs.reduce((s,v)=>s+v.total,0);
+        return `<div class="row-item" style="cursor:pointer" onclick="App.openCustomerForm('${c.id}')">
+          <div><div style="font-size:15px;font-weight:600">${esc(c.name)}
+            <span class="stamp ${c.tag==='recurring'?'':'ochre'}" style="margin-left:6px">${c.tag==='recurring'?'Recurring':'One-time'}</span></div>
+            <div style="font-size:12px;color:var(--mute);margin-top:3px">${esc(c.contact||"No contact on file")} · ${vs.length} visit${vs.length===1?'':'s'}</div></div>
+          <span class="money ink">${fmt(spent)}</span></div>`;
+      }).join("")}
+    `;
+  },
+  openCustomerForm(id){
+    const c = id ? this.data.customers.find(x=>x.id===id) : { id: uid(), name:"", contact:"", tag:"one-time" };
+    const html = `<div class="sheet"><h3>${id?"Edit customer":"New customer"} <span class="x" onclick="App.closeSheet()">✕</span></h3>
+      <label class="field"><span>Name</span><input id="cu_name" value="${esc(c.name)}"></label>
+      <label class="field"><span>Contact (phone or email)</span><input id="cu_contact" value="${esc(c.contact)}"></label>
+      <label class="field"><span>Tag</span><select id="cu_tag">
+        <option value="one-time" ${c.tag!=="recurring"?"selected":""}>One-time customer</option>
+        <option value="recurring" ${c.tag==="recurring"?"selected":""}>Recurring customer</option>
+      </select></label>
+      <button class="btn" style="width:100%;padding:12px;font-size:13.5px" onclick="App.saveCustomerForm('${c.id}')">Save</button>
+      ${id ? `<button class="btn brick" style="width:100%;padding:11px;font-size:13px;margin-top:10px" onclick="App.deleteCustomer('${id}')">Delete customer</button>` : ``}
+    </div>`;
+    document.getElementById("sheetHost").innerHTML = `<div class="sheet-overlay">${html}</div>`;
+  },
+  saveCustomerForm(id){
+    const name = document.getElementById("cu_name").value.trim();
+    if (!name) return toast("Name is required");
+    const contact = document.getElementById("cu_contact").value.trim();
+    const tag = document.getElementById("cu_tag").value;
+    let rec = this.data.customers.find(c=>c.id===id);
+    if (!rec){ rec = { id, createdAt: today() }; this.data.customers.push(rec); }
+    rec.name=name; rec.contact=contact; rec.tag=tag; rec.tagManual=true;
+    dbPut("customers", rec);
+    this.closeSheet(); this.render(); toast("Saved");
+  },
+  deleteCustomer(id){
+    if (!confirm("Delete this customer? Their past sales stay on record but won't be linked to a customer anymore.")) return;
+    this.data.customers = this.data.customers.filter(c=>c.id!==id);
+    dbDel("customers", id);
+    this.closeSheet(); this.render(); toast("Customer deleted");
+  },
+
+  /* ---------- STOCK (tab): Flavours + Batches ---------- */
+  setStockSub(s){ this.stockSub=s; this._anim=true; this.render(); },
+  viewStock(){
+    const sub = this.stockSub;
+    return `
+      <div class="hdr-row"><div><h2 class="section">${sub==='batches'?'Batches':'Flavours'}</h2>
+        <p class="sub">${sub==='batches' ? 'Brewing, ready, and recalled batches' : 'Your product range and stock on hand'}</p></div>
+        <button class="btn ${sub==='batches'?'':'ochre'}" onclick="${sub==='batches'?"App.openBatchForm()":"App.openProductForm()"}">+ New</button></div>
+      <div class="seg sub"><button class="${sub==='flavours'?'active':''}" onclick="App.setStockSub('flavours')">Flavours</button>
+        <button class="${sub==='batches'?'active':''}" onclick="App.setStockSub('batches')">Batches</button></div>
+      ${sub==='batches' ? this.batchesBody() : this.flavoursBody()}
+    `;
+  },
+  thumbHtml(p, size){
+    return p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;display:block">` : productMockup(p, size);
+  },
+  flavoursBody(){
+    const list = this.data.products.filter(p=>this.hit(p.name));
+    const stats = {}; this.productStats().forEach(s=>stats[s.productId]=s);
+    return `
+      ${this.searchBox("Search flavours")}
+      ${list.length===0 ? `<div class="empty">No flavours yet. Add your range.</div>` : list.map(p=>{
+        const s = stats[p.id];
+        const stock = Number(p.stock||0), low = Number(p.lowStock||0);
+        const stampHtml = stock<=0 ? `<span class="stamp brick">Out of stock</span>` : (low>0 && stock<=low ? `<span class="stamp ochre">Low stock</span>` : `<span class="stamp">${stock} in stock</span>`);
+        return `<div class="row-item">
+          <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;cursor:pointer" onclick="App.openProductForm('${p.id}')">
+            <div style="width:44px;height:44px;border-radius:10px;overflow:hidden;flex:none">${this.thumbHtml(p,44)}</div>
+            <div style="min-width:0"><div style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.name)}</div>
+              <div style="font-size:12px;color:var(--mute);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">${fmt(p.price)} each · ${s?s.units+' sold':'Not sold yet'} ${stampHtml}</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:2px;flex:none">
+            <button class="icon-x" aria-label="Adjust stock" onclick="App.openStockAdjust('${p.id}')">±</button>
+            <button class="icon-x" aria-label="Delete flavour" onclick="App.deleteProduct('${p.id}')">✕</button>
+          </div>
+        </div>`;
+      }).join("")}
+    `;
+  },
+  openProductForm(id){
+    const p = id ? this.data.products.find(x=>x.id===id) : { id: uid(), name:"", price:"", image:null, stock:0, lowStock:"" };
+    this._pendingImage = p.image || null;
+    const html = `<div class="sheet"><h3>${id?"Edit flavour":"New product"} <span class="x" onclick="App.closeSheet()">✕</span></h3>
+      <div style="display:flex;justify-content:center;margin-bottom:12px">
+        <div id="pr_preview" style="width:120px;height:120px;border-radius:16px;overflow:hidden">${this.thumbHtml(p,120)}</div>
+      </div>
+      <div id="pr_imgActions" style="display:flex;gap:8px;justify-content:center;margin-bottom:18px">
+        <label class="btn ghost" style="padding:9px 16px;font-size:12.5px;cursor:pointer">Upload photo<input type="file" accept="image/*" id="pr_file" style="display:none" onchange="App.onProductImageChange(event)"></label>
+        <button class="btn ghost" id="pr_removeBtn" style="padding:9px 16px;font-size:12.5px;display:${p.image?'inline-block':'none'}" onclick="App.clearProductImage()">Remove photo</button>
+      </div>
+      <p style="font-size:10.5px;color:var(--inkSoft);margin:-12px 0 14px;text-align:center">No photo yet? We'll show a placeholder mockup like this until you add one.</p>
+      <label class="field"><span>Product / flavour name</span><input id="pr_name" value="${esc(p.name)}" placeholder="e.g. Ginger Lemon" oninput="App.refreshMockupPreview()"></label>
+      <label class="field"><span>Standard price (KSh)</span><input id="pr_price" type="number" value="${p.price||""}"></label>
+      ${id ? `<div class="field"><span style="display:block;font:600 12.5px var(--body);color:var(--mute);margin-bottom:6px">Current stock</span>
+          <div style="display:flex;align-items:center;gap:10px"><b style="font-size:20px">${Number(p.stock||0)}</b>
+          <button class="btn ghost" style="padding:7px 14px;font-size:12px" onclick="App.closeSheet();App.openStockAdjust('${id}')">Adjust stock</button></div></div>`
+        : `<label class="field"><span>Starting stock</span><input id="pr_stock" type="number" value="0"></label>`}
+      <label class="field"><span>Low-stock alert at (optional)</span><input id="pr_low" type="number" value="${p.lowStock||''}"></label>
+      <button class="btn" style="width:100%;padding:12px;font-size:13.5px" onclick="App.saveProductForm('${p.id}')">Save</button>
+      ${id ? `<button class="btn brick" style="width:100%;padding:11px;font-size:13px;margin-top:10px" onclick="App.deleteProduct('${id}')">Delete flavour</button>` : ``}
+    </div>`;
+    document.getElementById("sheetHost").innerHTML = `<div class="sheet-overlay">${html}</div>`;
+  },
+  refreshMockupPreview(){
+    if (this._pendingImage) return;
+    document.getElementById("pr_preview").innerHTML = productMockup({ name: document.getElementById("pr_name").value }, 120);
+  },
+  async onProductImageChange(event){
+    const file = event.target.files[0]; if (!file) return;
+    try {
+      const dataUrl = await readAndCompressImage(file);
+      this._pendingImage = dataUrl;
+      document.getElementById("pr_preview").innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;display:block">`;
+      document.getElementById("pr_removeBtn").style.display = "inline-block";
+      toast("Photo added");
+    } catch(e){ toast("Couldn't read that image"); }
+  },
+  clearProductImage(){
+    this._pendingImage = null;
+    document.getElementById("pr_preview").innerHTML = productMockup({ name: document.getElementById("pr_name").value }, 120);
+    document.getElementById("pr_removeBtn").style.display = "none";
+    toast("Photo removed");
+  },
+  saveProductForm(id){
+    const name = document.getElementById("pr_name").value.trim();
+    if (!name) return toast("Product name is required");
+    const price = Number(document.getElementById("pr_price").value) || 0;
+    let rec = this.data.products.find(p=>p.id===id);
+    if (!rec){ rec = { id, createdAt: today() }; this.data.products.push(rec); }
+    rec.name=name; rec.price=price; rec.image = this._pendingImage || null;
+    rec.lowStock = Number(document.getElementById("pr_low").value) || 0;
+    const stockField = document.getElementById("pr_stock");
+    if (stockField) rec.stock = Number(stockField.value) || 0;
+    else if (rec.stock===undefined) rec.stock = 0;
+    dbPut("products", rec);
+    this._pendingImage = null;
+    this.closeSheet(); this.render(); toast("Saved");
+  },
+  deleteProduct(id){
+    if (!confirm("Delete this flavour? Past sales and batches will keep showing its name.")) return;
+    this.data.products = this.data.products.filter(p=>p.id!==id);
+    dbDel("products", id);
+    this.closeSheet(); this.render(); toast("Flavour deleted");
+  },
+
+  /* ---------- STOCK ADJUST ---------- */
+  openStockAdjust(productId){
+    const p = this.data.products.find(x=>x.id===productId); if (!p) return;
+    this._adjustType = "in";
+    const html = `<div class="sheet"><h3>Adjust stock <span class="x" onclick="App.closeSheet()">✕</span></h3>
+      <p class="sub" style="margin-top:-10px">${esc(p.name)} · currently ${Number(p.stock||0)} in stock</p>
+      <div class="seg"><button class="active" id="sa_in" onclick="App.setAdjustType('in')">Stock in</button><button id="sa_out" onclick="App.setAdjustType('out')">Stock out</button></div>
+      <label class="field"><span>Quantity</span><input id="sa_qty" type="number" min="1" value="1"></label>
+      <label class="field"><span>Date</span><input id="sa_date" type="date" value="${today()}"></label>
+      <label class="field"><span>Note (optional)</span><input id="sa_note" placeholder="e.g. Restock, breakage, samples given away"></label>
+      <button class="btn" style="width:100%;padding:12px;font-size:13.5px" onclick="App.saveStockAdjust('${productId}')">Save</button>
+    </div>`;
+    document.getElementById("sheetHost").innerHTML = `<div class="sheet-overlay">${html}</div>`;
+  },
+  setAdjustType(t){ this._adjustType=t; document.getElementById("sa_in").classList.toggle("active", t==="in"); document.getElementById("sa_out").classList.toggle("active", t==="out"); },
+  saveStockAdjust(productId){
+    const qty = Number(document.getElementById("sa_qty").value) || 0;
+    if (qty<=0) return toast("Enter a quantity");
+    const type = this._adjustType || "in";
+    const date = document.getElementById("sa_date").value || today();
+    const note = document.getElementById("sa_note").value.trim();
+    const ev = { id: uid(), productId, type, qty, date, note, createdAt: today() };
+    this.data.stockEvents.unshift(ev); dbPut("stockEvents", ev);
+    const p = this.data.products.find(x=>x.id===productId);
+    if (p){ p.stock = Math.max(0, Number(p.stock||0) + (type==="in" ? qty : -qty)); dbPut("products", p); }
+    this.closeSheet(); this.render(); toast("Stock updated");
+  },
+
+  /* ---------- BATCHES ---------- */
+  suggestBatchCode(productId){
+    const p = this.productMap()[productId];
+    const initials = p ? initialsOf(p.name) : "TS";
+    const d = today().replace(/-/g,"");
+    const countToday = this.data.batches.filter(b=>b.productId===productId && b.brewDate===today()).length + 1;
+    return `${initials}-${d}-${String(countToday).padStart(2,'0')}`;
+  },
+  batchesBody(){
+    const list = this.data.batches.filter(b=>{ const p=this.productMap()[b.productId]; return this.hit(p?p.name:"", b.batchCode); })
+      .sort((a,b)=> new Date(b.brewDate)-new Date(a.brewDate));
+    return `
+      ${this.searchBox("Search flavour or batch code")}
+      ${list.length===0 ? `<div class="empty">No batches yet.</div>` : list.map(b=>{
+        const p = this.productMap()[b.productId] || {name:"Deleted product"};
+        const stamp = b.status==='recalled' ? `<span class="stamp brick">Recalled</span>` : b.status==='ready' ? `<span class="stamp">Ready</span>` : `<span class="stamp ochre">Brewing</span>`;
+        return `<div class="card" style="cursor:pointer" onclick="App.openBatchForm('${b.id}')">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div style="min-width:0"><b style="font-size:15px">${esc(p.name)}</b> ${stamp}
+              <div style="font-size:11.5px;color:var(--inkSoft);margin-top:4px">Batch ${esc(b.batchCode||'—')} · Brewed ${niceDate(b.brewDate)}${b.readyDate?' · Ready '+niceDate(b.readyDate):''}</div></div>
+            ${b.qty ? `<span class="money ink" style="flex:none">${b.qty} units</span>` : ``}
+          </div>
+        </div>`;
+      }).join("")}
+    `;
+  },
+  openBatchForm(id){
+    const b = id ? this.data.batches.find(x=>x.id===id) : { id: uid(), productId: (this.data.products[0]||{}).id||"", status:"brewing", brewDate: today(), readyDate:"", qty:"", note:"" };
+    const prodOpts = this.data.products.map(p=>`<option value="${p.id}" ${p.id===b.productId?'selected':''}>${esc(p.name)}</option>`).join("");
+    const html = `<div class="sheet"><h3>${id?"Edit batch":"New batch"} <span class="x" onclick="App.closeSheet()">✕</span></h3>
+      ${this.data.products.length===0 ? `<p class="sub">Add a flavour first under Stock → Flavours.</p>` : `
+      <label class="field"><span>Flavour</span><select id="b_product" onchange="App.suggestCodeIntoField()">${prodOpts}</select></label>
+      <label class="field"><span>Batch code</span><input id="b_code" value="${esc(b.batchCode || this.suggestBatchCode(b.productId))}"></label>
+      <div class="grid2">
+        <label class="field"><span>Brew date</span><input id="b_brew" type="date" value="${b.brewDate||today()}"></label>
+        <label class="field"><span>Expected/ready date</span><input id="b_ready" type="date" value="${b.readyDate||''}"></label>
+      </div>
+      <label class="field"><span>Status</span><select id="b_status">
+        <option value="brewing" ${b.status==='brewing'?'selected':''}>Brewing</option>
+        <option value="ready" ${b.status==='ready'?'selected':''}>Ready</option>
+        <option value="recalled" ${b.status==='recalled'?'selected':''}>Recalled</option>
+      </select></label>
+      <label class="field"><span>Units produced (fill in once ready)</span><input id="b_qty" type="number" value="${b.qty||''}"></label>
+      <label class="field"><span>Note (optional)</span><input id="b_note" value="${esc(b.note||'')}" placeholder="Recipe tweaks, fermentation notes…"></label>
+      <button class="btn" style="width:100%;padding:12px;font-size:13.5px" onclick="App.saveBatchForm('${b.id}')">Save</button>
+      ${(id && b.status!=='ready') ? `<button class="btn ochre" style="width:100%;padding:11px;font-size:13px;margin-top:10px" onclick="App.markBatchReady('${b.id}')">Mark ready &amp; stock in</button>` : ``}
+      ${!id ? `<p style="font-size:10.5px;color:var(--inkSoft);margin-top:8px;text-align:center">Save this batch first, then reopen it to mark it ready and stock it in.</p>` : ``}
+      ${id ? `<button class="btn brick" style="width:100%;padding:11px;font-size:13px;margin-top:10px" onclick="App.deleteBatch('${id}')">Delete batch</button>` : ``}
+      ${id ? `<div style="margin-top:22px"><span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--inkSoft)">If this batch needs a recall</span>
+        <p style="font-size:11.5px;color:var(--inkSoft);margin-top:6px;line-height:1.5">${this.recallTraceText(id)}</p></div>` : ``}
+      `}
+    </div>`;
+    document.getElementById("sheetHost").innerHTML = `<div class="sheet-overlay">${html}</div>`;
+  },
+  suggestCodeIntoField(){
+    const pid = document.getElementById("b_product").value;
+    const codeField = document.getElementById("b_code");
+    if (codeField) codeField.value = this.suggestBatchCode(pid);
+  },
+  saveBatchForm(id){
+    const productSel = document.getElementById("b_product"); if (!productSel) return;
+    const productId = productSel.value;
+    const batchCode = document.getElementById("b_code").value.trim();
+    const brewDate = document.getElementById("b_brew").value || today();
+    const readyDate = document.getElementById("b_ready").value;
+    const status = document.getElementById("b_status").value;
+    const qty = Number(document.getElementById("b_qty").value) || "";
+    const note = document.getElementById("b_note").value.trim();
+    let rec = this.data.batches.find(x=>x.id===id);
+    if (!rec){ rec = { id, createdAt: today() }; this.data.batches.push(rec); }
+    rec.productId=productId; rec.batchCode=batchCode; rec.brewDate=brewDate; rec.readyDate=readyDate; rec.status=status; rec.qty=qty; rec.note=note;
+    dbPut("batches", rec);
+    this.closeSheet(); this.render(); toast("Batch saved");
+  },
+  markBatchReady(id){
+    const b = this.data.batches.find(x=>x.id===id); if (!b) return;
+    const qtyField = document.getElementById("b_qty");
+    const qty = Number(qtyField ? qtyField.value : 0) || 0;
+    if (qty<=0) return toast("Enter the units produced first");
+    const readyField = document.getElementById("b_ready");
+    const readyDate = (readyField && readyField.value) || today();
+    const codeField = document.getElementById("b_code");
+    b.status="ready"; b.qty=qty; b.readyDate=readyDate; b.batchCode = (codeField?codeField.value.trim():b.batchCode) || this.suggestBatchCode(b.productId);
+    dbPut("batches", b);
+    const ev = { id: uid(), productId: b.productId, type:"in", qty, date: readyDate, batchId: b.id, note: "From batch " + b.batchCode, createdAt: today() };
+    this.data.stockEvents.unshift(ev); dbPut("stockEvents", ev);
+    const p = this.data.products.find(x=>x.id===b.productId);
+    if (p){ p.stock = Number(p.stock||0) + qty; dbPut("products", p); }
+    this.closeSheet(); this.render(); toast("Batch marked ready and stocked in");
+  },
+  deleteBatch(id){
+    if (!confirm("Delete this batch record? Any stock already added from it will stay on hand.")) return;
+    this.data.batches = this.data.batches.filter(b=>b.id!==id);
+    dbDel("batches", id);
+    this.closeSheet(); this.render(); toast("Batch deleted");
+  },
+  recallTraceText(batchId){
+    const b = this.data.batches.find(x=>x.id===batchId); if (!b) return "";
+    const stockIn = this.data.stockEvents.find(e=>e.batchId===batchId && e.type==="in");
+    if (!stockIn) return "This batch hasn't been stocked in yet, so nothing from it has reached customers.";
+    const prodName = esc((this.productMap()[b.productId]||{}).name || "this flavour");
+    const after = this.data.sales.filter(s=>s.productId===b.productId && new Date(s.date) >= new Date(stockIn.date));
+    const custIds = new Set(after.map(s=>s.customerId));
+    const cm = this.customerMap();
+    const withContact = [...custIds].map(id=>cm[id]).filter(c=>c && c.contact).length;
+    return `${after.length} sale${after.length===1?'':'s'} of ${prodName} recorded on or after ${niceDate(stockIn.date)} (when this batch was stocked in) could include units from it. Exact bottle-level tracing isn't possible unless a batch code was noted on the label and sale. ${withContact} of the customers from those sales have a contact on file you could reach.`;
+  },
+
+  /* ---------- EXPENSES (tab): Operating + Production ---------- */
+  setExpSub(s){ this.expSub=s; this._anim=true; this.render(); },
+  viewExpenses(){
+    const sub = this.expSub;
+    return `
+      <div class="hdr-row"><div><h2 class="section">${sub==='production'?'Production costs':'Expenses'}</h2>
+        <p class="sub">${sub==='production' ? 'Costs tied to making each flavour' : 'Transport, equipment, pay-outs and other running costs'}</p></div>
+        <button class="btn brick" onclick="${sub==='production'?"App.openProdExpenseForm()":"App.openExpenseForm()"}">+ New</button></div>
+      <div class="seg sub"><button class="${sub==='operating'?'active':''}" onclick="App.setExpSub('operating')">Operating</button>
+        <button class="${sub==='production'?'active':''}" onclick="App.setExpSub('production')">Production</button></div>
+      ${sub==='production' ? this.prodExpBody() : this.opExpBody()}
+    `;
+  },
+  opExpBody(){
+    const list = this.data.expenses.filter(e=>this.hit(EXP_CATS[e.category]||e.category, e.payee, e.note)).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const total = list.reduce((s,e)=>s+Number(e.amount),0);
+    return `
+      ${this.searchBox("Search expenses")}
+      <div class="card"><div class="totalline bold"><span>Total shown</span><span class="money brick">-${fmt(total)}</span></div></div>
+      ${list.length===0 ? `<div class="empty">No expenses logged yet.</div>` : list.map(e=>`
+        <div class="row-item"><div><div style="font-weight:600;font-size:15px">${esc(EXP_CATS[e.category]||e.category)}${e.payee?' · '+esc(e.payee):''}</div>
+          <div style="font-size:12px;color:var(--mute);margin-top:2px">${e.note?esc(e.note)+' · ':''}${niceDate(e.date)}</div></div>
+          <div style="display:flex;align-items:center;gap:6px"><span class="money brick">-${fmt(e.amount)}</span>
+            <button class="icon-x" onclick="App.deleteExpense('${e.id}')">✕</button></div></div>`).join("")}
+    `;
+  },
+  openExpenseForm(){
+    const html = `<div class="sheet"><h3>New expense <span class="x" onclick="App.closeSheet()">✕</span></h3>
+      <label class="field"><span>Category</span><select id="e_cat">
+        <option value="transport">Transport</option><option value="equipment">Equipment</option>
+        <option value="payout">Pay-out</option><option value="other">Other</option>
+      </select></label>
+      <label class="field"><span>Amount (KSh)</span><input id="e_amt" type="number"></label>
+      <label class="field"><span>Paid to (optional)</span><input id="e_payee" placeholder="e.g. Boda rider, supplier, helper"></label>
+      <label class="field"><span>Date</span><input id="e_date" type="date" value="${today()}"></label>
+      <label class="field"><span>Note (optional)</span><input id="e_note"></label>
+      <button class="btn" style="width:100%;padding:12px;font-size:13.5px" onclick="App.saveExpenseForm()">Save</button>
+    </div>`;
+    document.getElementById("sheetHost").innerHTML = `<div class="sheet-overlay">${html}</div>`;
+  },
+  saveExpenseForm(){
+    const amount = Number(document.getElementById("e_amt").value) || 0;
+    if (amount<=0) return toast("Enter an amount");
+    const rec = { id: uid(), category: document.getElementById("e_cat").value, amount,
+      payee: document.getElementById("e_payee").value.trim(), date: document.getElementById("e_date").value || today(),
+      note: document.getElementById("e_note").value.trim(), createdAt: today() };
+    this.data.expenses.unshift(rec); dbPut("expenses", rec);
+    this.closeSheet(); this.render(); toast("Expense logged");
+  },
+  deleteExpense(id){
+    this.data.expenses = this.data.expenses.filter(e=>e.id!==id);
+    dbDel("expenses", id); this.render(); toast("Expense removed");
+  },
+  prodExpBody(){
+    const pm = this.productMap();
+    const list = this.data.prodExpenses.filter(e=>{ const p=pm[e.productId]; return this.hit(p?p.name:"", PROD_CATS[e.category]||e.category, e.note); }).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const total = list.reduce((s,e)=>s+Number(e.amount),0);
+    return `
+      ${this.searchBox("Search production costs")}
+      <div class="card"><div class="totalline bold"><span>Total shown</span><span class="money brick">-${fmt(total)}</span></div></div>
+      ${list.length===0 ? `<div class="empty">No production costs logged yet.</div>` : list.map(e=>{
+        const p = pm[e.productId];
+        return `<div class="row-item"><div><div style="font-weight:600;font-size:15px">${esc(p?p.name:"Deleted product")} · ${esc(PROD_CATS[e.category]||e.category)}</div>
+          <div style="font-size:12px;color:var(--mute);margin-top:2px">${e.note?esc(e.note)+' · ':''}${niceDate(e.date)}</div></div>
+          <div style="display:flex;align-items:center;gap:6px"><span class="money brick">-${fmt(e.amount)}</span>
+            <button class="icon-x" onclick="App.deleteProdExpense('${e.id}')">✕</button></div></div>`;
+      }).join("")}
+    `;
+  },
+  openProdExpenseForm(){
+    if (this.data.products.length===0) return toast("Add a flavour first");
+    const batches = this.data.batches;
+    const prodOpts = this.data.products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");
+    const html = `<div class="sheet"><h3>New production cost <span class="x" onclick="App.closeSheet()">✕</span></h3>
+      <label class="field"><span>Flavour</span><select id="pe_product" onchange="App.refreshProdExpBatches()">${prodOpts}</select></label>
+      <label class="field"><span>Category</span><select id="pe_cat">
+        <option value="ingredients">Ingredients</option><option value="packaging">Packaging</option>
+        <option value="labor">Labour</option><option value="other">Other</option>
+      </select></label>
+      <label class="field"><span>Amount (KSh)</span><input id="pe_amt" type="number"></label>
+      <label class="field"><span>Batch (optional)</span><select id="pe_batch"></select></label>
+      <label class="field"><span>Date</span><input id="pe_date" type="date" value="${today()}"></label>
+      <label class="field"><span>Note (optional)</span><input id="pe_note"></label>
+      <button class="btn" style="width:100%;padding:12px;font-size:13.5px" onclick="App.saveProdExpenseForm()">Save</button>
+    </div>`;
+    document.getElementById("sheetHost").innerHTML = `<div class="sheet-overlay">${html}</div>`;
+    this.refreshProdExpBatches();
+  },
+  refreshProdExpBatches(){
+    const pid = document.getElementById("pe_product").value;
+    const sel = document.getElementById("pe_batch");
+    const options = this.data.batches.filter(b=>b.productId===pid);
+    sel.innerHTML = `<option value="">Not linked to a batch</option>` + options.map(b=>`<option value="${b.id}">${esc(b.batchCode||b.id)} · ${niceDate(b.brewDate)}</option>`).join("");
+  },
+  saveProdExpenseForm(){
+    const amount = Number(document.getElementById("pe_amt").value) || 0;
+    if (amount<=0) return toast("Enter an amount");
+    const rec = { id: uid(), productId: document.getElementById("pe_product").value, category: document.getElementById("pe_cat").value, amount,
+      batchId: document.getElementById("pe_batch").value || null, date: document.getElementById("pe_date").value || today(),
+      note: document.getElementById("pe_note").value.trim(), createdAt: today() };
+    this.data.prodExpenses.unshift(rec); dbPut("prodExpenses", rec);
+    this.closeSheet(); this.render(); toast("Production cost logged");
+  },
+  deleteProdExpense(id){
+    this.data.prodExpenses = this.data.prodExpenses.filter(e=>e.id!==id);
+    dbDel("prodExpenses", id); this.render(); toast("Removed");
+  },
+
+  /* ---------- STATS ---------- */
+  setStatMetric(m){ this._statMetric=m; this._anim=true; this.render(); },
+  viewStats(){
+    const ps = this.productStats();
+    const metric = this._statMetric;
+    const valOf = p => metric==='units' ? p.units : (metric==='net' ? p.net : p.trueNet);
+    const mx = Math.max(1, ...ps.map(p=>Math.max(0,valOf(p))));
+    const t = this.totals();
+    return `
+      <h2 class="section">Stats</h2><p class="sub">Product performance and overall P&amp;L</p>
+      <div class="card">
+        <div class="totalline"><span>Gross sales</span><span class="money ink">${fmt(t.gross)}</span></div>
+        <div class="totalline"><span>Discounts given</span><span class="money brick">-${fmt(t.discount)}</span></div>
+        <div class="totalline"><span>Operating expenses</span><span class="money brick">-${fmt(t.opEx)}</span></div>
+        <div class="totalline"><span>Production costs</span><span class="money brick">-${fmt(t.prodEx)}</span></div>
+        <div class="totalline bold"><span>Net profit</span><span class="money leaf">${fmt(t.trueProfit)}</span></div>
+      </div>
+      <h2 class="section" style="margin-top:28px">By product</h2><p class="sub">${ps.length} product${ps.length===1?'':'s'} with recorded sales</p>
+      <div class="seg"><button class="${metric==='units'?'active':''}" onclick="App.setStatMetric('units')">Units sold</button>
+        <button class="${metric==='net'?'active':''}" onclick="App.setStatMetric('net')">Revenue</button>
+        <button class="${metric==='trueNet'?'active':''}" onclick="App.setStatMetric('trueNet')">True profit</button></div>
+      ${ps.length===0 ? `<div class="empty">No sales recorded yet.</div>` : `
+      <div style="margin-bottom:8px">${ps.map(p=>`
+        <div class="statrow"><span class="statname">${esc(p.name)}</span>
+          <div class="statbarwrap"><i class="statbar" style="width:${Math.max(0,valOf(p))/mx*100}%"></i></div>
+          <span class="statval">${metric==='units' ? p.units+' u' : fmt(valOf(p))}</span></div>`).join("")}</div>
+      ${ps.map(p=>{
+        const prod = this.productMap()[p.productId] || {name:p.name};
+        return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0">
+            <div style="width:32px;height:32px;border-radius:8px;overflow:hidden;flex:none">${this.thumbHtml(prod,32)}</div>
+            <b style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.name)}</b>
+          </div>
+          <span class="money leaf" style="flex:none">${fmt(p.trueNet)}</span></div>
+          <div style="font-size:11.5px;color:var(--inkSoft);margin-top:4px">${p.units} units sold · ${p.customers} customer${p.customers===1?'':'s'} · ${fmt(p.discount)} discounts · ${fmt(p.prodCost)} production cost</div>
+        </div>`;
+      }).join("")}
+      `}
+    `;
+  },
+
+  /* ---------- SHEETS ---------- */
+  closeSheet(){ document.getElementById("sheetHost").innerHTML = ""; }
+};
+
+document.addEventListener("click", e=>{ if (e.target.classList.contains("sheet-overlay")) App.closeSheet(); });
+document.addEventListener("keydown", e=>{ if (e.key==="Escape") App.closeSheet(); });
+App.init();
+
+if ("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
+}
+</script>
+</body>
+</html>
